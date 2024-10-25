@@ -34,15 +34,22 @@ if [ -f "$POSTGRES_CONF_FILE" ] && [ ! -f "$SSL_DIR/server.crt" ]; then
   bash "$INIT_SSL_SCRIPT"
 fi
 
+# Add pg_cron configuration to postgresql.conf if not already present
+if ! grep -q "shared_preload_libraries = 'pg_cron'" "$POSTGRES_CONF_FILE"; then
+  echo "Configuring pg_cron in postgresql.conf..."
+  echo "shared_preload_libraries = 'pg_cron'" >> "$POSTGRES_CONF_FILE"
+  echo "cron.database_name = 'railway'" >> "$POSTGRES_CONF_FILE"
+fi
+
 # unset PGHOST to force psql to use Unix socket path
 # this is specific to Railway and allows
 # us to use PGHOST after the init
 unset PGHOST
 
-## unset PGPORT also specific to Railway
-## since postgres checks for validity of
-## the value in PGPORT we unset it in case
-## it ends up being empty
+# unset PGPORT also specific to Railway
+# since postgres checks for validity of
+# the value in PGPORT we unset it in case
+# it ends up being empty
 unset PGPORT
 
 # Call the entrypoint script with the
