@@ -1,4 +1,4 @@
-FROM logicwind/postgres-partman-cron:15
+FROM goodrequestcom/postgis:16-3.4-postgresai4
 
 # Install OpenSSL and sudo
 RUN apt-get update && apt-get install -y openssl sudo
